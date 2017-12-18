@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+
+    <script>window.$ = window.jQuery = require('jquery');</script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+    <script>
+
+        $(document).ready(function () {
+
+            $(".btn").click(function () {
+
+                var wallet = $("#wallet").val();
+
+
+                console.log(wallet)
+                fetch('https://blockchain.info/ru/rawaddr/'+wallet)
+                    .then(function(response) {
+                        response.json().then(function(data) {
+
+                            console.log(data)
+                            $('.final_balance').html(data.final_balance/100000000 + " BTC")
+                            $('.total_received').html(data.total_received/100000000 + " BTC")
+                            $('.total_sent').html(data.total_sent/100000000 + " BTC")
+
+                            $.each(data.txs,function (index, value) {
+
+                                var a = '<a target="_blank" href="https://blockchain.info/ru/tx/' + value.hash + '" >' + value.hash + '</a> <br>'
+                                $('#result').append(a)
+
+                            })
+
+                            $('#result').css("display","block")
+                        });
+                    });
+            })
+
+        })
+
+    </script>
+
+    <style>
+
+        .form {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="form col-md-8 col-md-offset-2">
+    <div class="form-group">
+        <label for="wallet">Введите адрес биткоин-кошелька для просмотра данных!</label>
+        <input type="text" class="form-control" id="wallet">
+    </div>
+
+    <button type="submit" class="btn">Отправить</button>
+</div>
+<div id="result" style="display: none;margin:20px;">
+
+    <table class="table">
+        <tr>
+            <td>Баланс</td>
+            <td class="final_balance success"></td>
+        </tr>
+        <tr>
+            <td>Всего получено BTC</td>
+            <td class="total_received"></td>
+        </tr>
+        <tr>
+            <td>Всего послано BTC</td>
+            <td class="total_sent"></td>
+        </tr>
+    </table>
+
+    <p>Список транзакций (кликабельно)</p>
+
+</div>
+
+</body>
+</html>
